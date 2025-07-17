@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WildTalk AI</title>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <h1>WildTalk AI</h1>
+    <p>Escribe un texto y genera voz narrada:</p>
+    <textarea id="textInput" placeholder="Escribe aquí..."></textarea><br>
+    <button onclick="generar()">Generar</button>
+    <br><br>
+    <audio id="audio" controls style="display:none;"></audio>
+    <script>
+    async function generar() {
+        const text = document.getElementById("textInput").value;
+        const res = await fetch("/generate", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({text})
+        });
+        const data = await res.json();
+        const audio = document.getElementById("audio");
+        audio.src = data.audio_url;
+        audio.style.display = "block";
+        audio.play();
+    }
+    </script>
+</body>
+</html>

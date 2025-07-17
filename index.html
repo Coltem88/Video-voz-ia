@@ -1,0 +1,57 @@
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<title>Generador Video + Voz IA Local</title>
+</head>
+<body>
+<h1>Genera video con voz local</h1>
+<form id="form">
+  <textarea id="text" rows="4" cols="50" placeholder="Escribe el texto aquí"></textarea><br>
+  <button type="submit">Generar Video</button>
+</form>
+<video id="video" width="640" height="480" controls style="display:none; margin-top: 20px;"></video>
+
+<script>
+const form = document.getElementById("form");
+const video = document.getElementById("video");
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const text = document.getElementById("text").value.trim();
+  if (!text) {
+    alert("Por favor escribe un texto para generar el video.");
+    return;
+  }
+
+  video.style.display = "none";
+  video.src = "";
+  alert("Generando video, espera unos segundos...");
+
+  const formData = new FormData();
+  formData.append("text", text);
+
+  try {
+    const res = await fetch("/generate-video/", {
+      method: "POST",
+      body: formData
+    });
+
+    if (!res.ok) {
+      alert("Error al generar video.");
+      return;
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    video.src = url;
+    video.style.display = "block";
+    video.play();
+  } catch (error) {
+    alert("Error de conexión al backend.");
+  }
+});
+</script>
+</body>
+</html>
